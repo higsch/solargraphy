@@ -8,7 +8,7 @@ export const getDayOfYear = (date) => {
   return dayOfYear;
 };
 
-// add one day to date
+// add i days to date
 // https://codingbeautydev.com/blog/javascript-add-one-day-to-date/
 export const addDays = (date, i) => {
   const dateCopy = new Date(date);
