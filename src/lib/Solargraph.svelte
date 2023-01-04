@@ -7,16 +7,17 @@
 
   export let startDate;
   export let numDays;
+  export let clouds;
 
   // Hamburg
-  // const lat = 53.45;
-  // const lon = 9.94;
-  // const deltaGMT = 1;
+  const lat = 53.45;
+  const lon = 9.94;
+  const deltaGMT = 1;
 
   // Solna
-  const lat = 59.38;
-  const lon = 18.03;
-  const deltaGMT = 1;
+  // const lat = 59.38;
+  // const lon = 18.03;
+  // const deltaGMT = 1;
 
   let width, height;
 
@@ -43,9 +44,11 @@
     <svg
       width={width}
       height={height}
-      style="background: #09003d;"
+      style:background="#09003d"
     >
-      {#each dateArray as date}
+      {#each dateArray as date (date)}
+        {@const currentMs = date.getTime()}
+        {@const nextDayMs = date.getTime() + 24 * 60 * 60 * 1000}
         <Solarpath
           date={date}
           lat={lat}
@@ -53,6 +56,7 @@
           deltaGMT={deltaGMT}
           xScale={xScale}
           yScale={yScale}
+          clouds={clouds.filter(d => d.ms >= currentMs && d.ms < nextDayMs)}
         />
       {/each}
     </svg>

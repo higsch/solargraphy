@@ -7,9 +7,12 @@
   export let deltaGMT;
   export let xScale;
   export let yScale;
+  export let clouds;
 
   const deltaMinutes = 5;
   const dayMinutes = 24 * 60;
+
+  let cloudPoints = [];
 
   $: dayOfYear = getDayOfYear(date);
 
@@ -35,9 +38,23 @@
     };
   });
 
+  $: {
+    const p = [];
+    const cPoints = points.map(point => {
+      const cloud = clouds.filter(d => point.minute >= d.acc_minutes_start && point.minute < d.acc_minutes_end);
+      return {
+        ...point, 
+        cloud
+      };
+    });
+    console.log(cPoints);
+  }
+
   $: path = points.map((d, i) => {
     return `${i === 0 ? 'M' : 'L'}${d.x} ${d.y}`;
   }).join('');
+
+  $: console.log(clouds);
 </script>
 
 <g class="solarpath">
