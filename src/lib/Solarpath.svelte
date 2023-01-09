@@ -1,5 +1,5 @@
 <script>
-  import { scaleLinear, scalePow } from 'd3';
+  import { scaleLinear, extent } from 'd3';
 
   import { getSunPosition } from '$lib/solar';
 
@@ -15,7 +15,7 @@
   const deltaMinutes = 5;
   const dayMinutes = 24 * 60;
 
-  $: radiationScale = scalePow()
+  $: radiationScale = scaleLinear()
     .domain([radiationRange[0], radiationRange[1] / 2, radiationRange[1]])
     .range([0.8, 0.1, 0]);
 
@@ -64,7 +64,7 @@
     d={singlePath}
     fill="none"
     stroke="#b7c9bb"
-    stroke-width="3"
+    stroke-width="4"
     stroke-opacity="0.4"
   />
   {#each paths as { id, path, opacity } (id)}
@@ -72,8 +72,9 @@
       d={path}
       fill="none"
       stroke="#09003d"
-      stroke-width="3"
+      stroke-width="4"
       stroke-opacity={opacity}
+      stroke-linecap="butt"
     />
   {/each}
 </g>
