@@ -3,14 +3,14 @@
 
   export let data = {};
 
-  $: ({ clouds } = data);
+  $: ({ radiation } = data);
 </script>
 
 <div class="wrapper">
   <Solargraph
     startDate={new Date(2022, 5, 21)}
     numDays={Math.ceil(365 / 2)}
-    clouds={clouds}
+    radiation={radiation}
   />
 </div>
 

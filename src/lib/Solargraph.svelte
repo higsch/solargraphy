@@ -1,5 +1,5 @@
 <script>
-  import { groups, scaleLinear } from 'd3';
+  import { groups, scaleLinear, max } from 'd3';
 
   import { addDays, getDayOfYear } from '$lib/solar';
 
@@ -7,7 +7,7 @@
 
   export let startDate;
   export let numDays;
-  export let clouds;
+  export let radiation;
 
   // Hamburg
   const lat = 53.45;
@@ -37,12 +37,12 @@
       return getDayOfYear(d);
     });
 
-  $: cloudsExtended = groups(clouds, d => d.dayOfYear).map(d => {
+  $: radiationExtended = groups(radiation, d => d.dayOfYear).map(d => {
     const data = d[1];
     const parsedData = data.map(dd => {
       return {
         date: dd.date,
-        cloudcover: dd.cloudcover,
+        radiation: dd.global_radiation,
         hour: dd.hour,
         hours: dd.hour + dd.minute / 60
       };
@@ -51,70 +51,38 @@
       dayOfYear: d[0],
       data: parsedData
     };
-  }).map((d, i, arr) => {
-    const { data } = d;
-    const extendedData = [];
-    data.forEach(dd => {
-      if (dd.hour === 0 && dd.hours !== 0 && arr[i - 1]) {
-        const { data: previousData } = arr[i - 1];
-        extendedData.push({
-          ...previousData.slice(-1)[0],
-          hours: 0
-        });
-      }
-      extendedData.push(dd);
-      if (dd.hour === 23 && dd.hours !== 24 && arr[i + 1]) {
-        const { data: nextData } = arr[i + 1];
-        extendedData.push({
-          ...nextData[0],
-          hours: 24
-        });
-      }
-    });
-    return {
-      ...d,
-      data: extendedData
-    }
   }).map(d => {
     const { data } = d;
     const spanData = data.map((dd, i, arr) => {
-      const startHours = dd.hours;
-      const endHours = arr[i + 1] ? arr[i + 1].hours : null;
+      const startHours = arr[i - 1] ? arr[i - 1].hours : null;
+      const endHours = dd.hours;
       return {
         ...dd,
         startHours,
         endHours
       };
-    }).filter(dd => dd.endHours !== null);
+    });
     return {
       ...d,
       data: spanData
     }
   });
 
-  $: cloudsReduced = cloudsExtended.map(d => {
+  $: radiationExtendedDoubled = radiationExtended.map((d, i, arr) => {
     const { data } = d;
-    const reduced = [];
-    let {
-      cloudcover: previousCloudCover,
-      startHours: start
-    } = data[0];
-    data.forEach((dd, i, arr) => {
-      if (dd.cloudcover !== previousCloudCover || i === arr.length - 1) {
-        reduced.push({
-          cloudcover: previousCloudCover,
-          start: start,
-          end: dd.endHours
-        });
-        start = dd.endHours;
-      }
-      previousCloudCover = dd.cloudcover;
-    });
+    const { data: nextDayData = [] } = arr[i + 1] || {};
+    const firstNextDatum = nextDayData[0];
     return {
       ...d,
-      data: reduced
+      data: [...data, {
+        ...firstNextDatum,
+        startHours: 23 + 50 / 60,
+        endHours: 24
+      }].filter(d => d.startHours !== null)
     };
   });
+
+  $: radiationRange = [0, max(radiationExtendedDoubled.map(d => d.data).flat(), d => d.radiation)];
 </script>
 
 <div
@@ -136,7 +104,8 @@
           deltaGMT={deltaGMT}
           xScale={xScale}
           yScale={yScale}
-          clouds={cloudsReduced.find(d => d.dayOfYear === dayOfYear).data}
+          radiation={radiationExtendedDoubled.find(d => d.dayOfYear === dayOfYear).data}
+          radiationRange={radiationRange}
         />
       {/each}
     </svg>

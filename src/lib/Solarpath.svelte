@@ -1,5 +1,5 @@
 <script>
-  import { scaleLinear } from 'd3';
+  import { scaleLinear, scalePow } from 'd3';
 
   import { getSunPosition } from '$lib/solar';
 
@@ -9,14 +9,15 @@
   export let deltaGMT;
   export let xScale;
   export let yScale;
-  export let clouds;
+  export let radiation;
+  export let radiationRange;
 
-  const deltaMinutes = 1;
+  const deltaMinutes = 5;
   const dayMinutes = 24 * 60;
 
-  const cloudScale = scaleLinear()
-    .domain([0, 8])
-    .range([0, 0.3]);
+  $: radiationScale = scalePow()
+    .domain([radiationRange[0], radiationRange[1] / 2, radiationRange[1]])
+    .range([0.8, 0.1, 0]);
 
   $: emptyPoints = Array.from({length: dayMinutes / deltaMinutes + 1})
     .map((_, i) => ({minute: i * deltaMinutes}));
@@ -44,24 +45,16 @@
     return `${i === 0 ? 'M' : 'L'}${d.x} ${d.y}`;
   }).join('');
 
-  $: paths = clouds.map((c, i, arr) => {
-    const selectedPoints = points.filter(p => c.start <= p.hour && c.end > p.hour);
+  $: paths = radiation.map((r, i) => {
+    const selectedPoints = points.filter(p => r.startHours <= p.hour && r.endHours >= p.hour);
     const path = selectedPoints.map((d, i) => {
       return `${i === 0 ? 'M' : 'L'}${d.x} ${d.y}`;
     }).join('');
-    // const { cloudcover: previousCloudCover } = arr[i - 1] || {};
-    // const { cloudcover: nextCloudCover } = arr[i + 1] || {};
     return {
       id: i,
       path,
-      opacity: cloudScale(c.cloudcover),
+      opacity: radiationScale(r.radiation),
       points: selectedPoints
-    };
-  }).map((d, i, arr) => {
-    const link = arr[i + 1] ? `L${arr[i + 1].points[0].x} ${arr[i + 1].points[0].y}` : '';
-    return {
-      ...d,
-      path: `${d.path}${link}`
     };
   });
 </script>
@@ -70,7 +63,7 @@
   <path
     d={singlePath}
     fill="none"
-    stroke="#e8e04d"
+    stroke="#b7c9bb"
     stroke-width="3"
     stroke-opacity="0.4"
   />
