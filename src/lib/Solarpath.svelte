@@ -1,5 +1,5 @@
 <script>
-  import { scaleLinear, extent } from 'd3';
+  import { scaleLinear } from 'd3';
 
   import { getSunPosition } from '$lib/solar';
 
@@ -16,8 +16,8 @@
   const dayMinutes = 24 * 60;
 
   $: radiationScale = scaleLinear()
-    .domain([radiationRange[0], radiationRange[1] / 2, radiationRange[1]])
-    .range([0.8, 0.1, 0]);
+    .domain([radiationRange[0]+0.001, radiationRange[1] / 3, radiationRange[1]])
+    .range([1, 0.1, 0]);
 
   $: emptyPoints = Array.from({length: dayMinutes / deltaMinutes + 1})
     .map((_, i) => ({minute: i * deltaMinutes}));
