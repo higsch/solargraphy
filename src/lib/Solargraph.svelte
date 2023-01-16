@@ -38,28 +38,19 @@
     });
 
   $: radiationExtended = groups(radiation, d => d.dayOfYear).map(d => {
-    const data = d[1];
-    const parsedData = data.map(dd => {
-      return {
-        date: dd.date,
-        radiation: dd.global_radiation,
-        hour: dd.hour,
-        hours: dd.hour + dd.minute / 60
-      };
-    });
     return {
       dayOfYear: d[0],
-      data: parsedData
+      data: d[1]
     };
   }).map(d => {
     const { data } = d;
     const spanData = data.map((dd, i, arr) => {
-      const startHours = arr[i - 1] ? arr[i - 1].hours : null;
-      const endHours = dd.hours;
+      const startHour = arr[i - 1] ? arr[i - 1].hour : null;
+      const endHour = dd.hour;
       return {
         ...dd,
-        startHours,
-        endHours
+        startHour,
+        endHour
       };
     });
     return {
@@ -76,9 +67,27 @@
       ...d,
       data: [...data, {
         ...firstNextDatum,
-        startHours: 23 + 50 / 60,
-        endHours: 24
-      }].filter(d => d.startHours !== null)
+        startHour: 23 + 50 / 60,
+        endHour: 24
+      }].filter(d => d.startHour !== null)
+    };
+  }).map(d => {
+    const { data } = d;
+    const dataReduced = [];
+    let { startHour } = data[0];
+    let { radiation: nextRadiation = -1 } = data[1] || {};
+    data.forEach((dd, i, arr) => {
+      if (dd.radiation !== nextRadiation || dd.endHour === 24) {
+        dataReduced.push({
+          ...dd,
+          startHour
+        });
+        startHour = arr[i + 1] ? arr[i + 1].startHour : null;
+      }
+    });
+    return {
+      ...d,
+      data: dataReduced
     };
   });
 
@@ -117,5 +126,9 @@
     width: 100%;
     height: 100%;
     overflow: hidden;
+  }
+
+  svg {
+    mix-blend-mode: luminosity;
   }
 </style>

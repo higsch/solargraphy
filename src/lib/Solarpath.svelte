@@ -1,5 +1,5 @@
 <script>
-  import { scaleLinear } from 'd3';
+  import { scaleLinear, scalePow, interpolateHcl } from 'd3';
 
   import { getSunPosition } from '$lib/solar';
 
@@ -15,9 +15,15 @@
   const deltaMinutes = 5;
   const dayMinutes = 24 * 60;
 
-  $: radiationScale = scaleLinear()
-    .domain([radiationRange[0]+0.001, radiationRange[1] / 3, radiationRange[1]])
+  $: opacityScale = scaleLinear()
+    .domain([radiationRange[0], radiationRange[1] / 5, radiationRange[1]])
     .range([1, 0.1, 0]);
+
+  $: colorScale = scalePow()
+    .exponent(0.6)
+    .domain([radiationRange[0], radiationRange[1]])
+    .range(['#09003d', '#fcd5ce'])
+    .interpolate(interpolateHcl);
 
   $: emptyPoints = Array.from({length: dayMinutes / deltaMinutes + 1})
     .map((_, i) => ({minute: i * deltaMinutes}));
@@ -39,42 +45,43 @@
       x: xScale(azimuth),
       y: yScale(elevation)
     };
-  });
+  }).filter(d => d.hour < 27);
 
   $: singlePath = points.map((d, i) => {
     return `${i === 0 ? 'M' : 'L'}${d.x} ${d.y}`;
   }).join('');
 
   $: paths = radiation.map((r, i) => {
-    const selectedPoints = points.filter(p => r.startHours <= p.hour && r.endHours >= p.hour);
+    const selectedPoints = points.filter(p => r.startHour <= p.hour && r.endHour >= p.hour);
     const path = selectedPoints.map((d, i) => {
       return `${i === 0 ? 'M' : 'L'}${d.x} ${d.y}`;
     }).join('');
     return {
       id: i,
       path,
-      opacity: radiationScale(r.radiation),
+      opacity: opacityScale(r.radiation),
+      color: colorScale(r.radiation),
       points: selectedPoints
     };
   });
 </script>
 
 <g class="solarpath">
-  <path
+  <!-- <path
     d={singlePath}
     fill="none"
-    stroke="#b7c9bb"
-    stroke-width="4"
-    stroke-opacity="0.4"
-  />
-  {#each paths as { id, path, opacity } (id)}
+    stroke="#edf6f9"
+    stroke-width="3.5"
+    stroke-opacity="0.8"
+  /> -->
+  {#each paths as { id, path, color } (id)}
     <path
       d={path}
       fill="none"
-      stroke="#09003d"
+      stroke={color}
       stroke-width="4"
-      stroke-opacity={opacity}
-      stroke-linecap="butt"
+      stroke-opacity="1.0"
+      stroke-linecap="round"
     />
   {/each}
 </g>
