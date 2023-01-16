@@ -11,6 +11,8 @@
   export let yScale;
   export let radiation;
   export let radiationRange;
+  export let foregroundColor;
+  export let backgroundColor;
 
   const deltaMinutes = 5;
   const dayMinutes = 24 * 60;
@@ -22,7 +24,7 @@
   $: colorScale = scalePow()
     .exponent(0.6)
     .domain([radiationRange[0], radiationRange[1]])
-    .range(['#09003d', '#fcd5ce'])
+    .range([backgroundColor, foregroundColor])
     .interpolate(interpolateHcl);
 
   $: emptyPoints = Array.from({length: dayMinutes / deltaMinutes + 1})
@@ -47,9 +49,9 @@
     };
   }).filter(d => d.hour < 27);
 
-  $: singlePath = points.map((d, i) => {
-    return `${i === 0 ? 'M' : 'L'}${d.x} ${d.y}`;
-  }).join('');
+  // $: singlePath = points.map((d, i) => {
+  //   return `${i === 0 ? 'M' : 'L'}${d.x} ${d.y}`;
+  // }).join('');
 
   $: paths = radiation.map((r, i) => {
     const selectedPoints = points.filter(p => r.startHour <= p.hour && r.endHour >= p.hour);
@@ -66,7 +68,7 @@
   });
 </script>
 
-<g class="solarpath">
+<g class="solarpath" filter="url(#noise)">
   <!-- <path
     d={singlePath}
     fill="none"

@@ -8,6 +8,8 @@
   export let startDate;
   export let numDays;
   export let radiation;
+  export let foregroundColor = '#fe345c';
+  export let backgroundColor = '#1d2830';
 
   // Hamburg
   const lat = 53.45;
@@ -103,8 +105,17 @@
     <svg
       width={width}
       height={height}
-      style:background="#09003d"
+      style:background={backgroundColor}
     >
+      <defs>
+        <filter id="blur">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" />
+        </filter>
+        <filter id="noise">
+          <feTurbulence baseFrequency="0.2" xresult="colorNoise" />
+          <feComposite operator="out" in="SourceGraphic" in2="colorNoise"/>
+        </filter>
+      </defs>
       {#each dateArray as dayOfYear (dayOfYear)}
         <Solarpath
           dayOfYear={dayOfYear}
@@ -115,6 +126,8 @@
           yScale={yScale}
           radiation={radiationExtendedDoubled.find(d => d.dayOfYear === dayOfYear).data}
           radiationRange={radiationRange}
+          foregroundColor={foregroundColor}
+          backgroundColor={backgroundColor}
         />
       {/each}
     </svg>
