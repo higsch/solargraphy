@@ -14,7 +14,7 @@
   export let foregroundColor;
   export let backgroundColor;
 
-  const deltaMinutes = 5;
+  const deltaMinutes = 1;
   const dayMinutes = 24 * 60;
 
   $: opacityScale = scaleLinear()
@@ -68,7 +68,8 @@
   });
 </script>
 
-<g class="solarpath" filter="url(#noise)">
+<g class="solarpath">
+<!-- <g class="solarpath" filter="url(#noise)"> -->
   <!-- <path
     d={singlePath}
     fill="none"
