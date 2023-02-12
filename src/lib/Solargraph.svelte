@@ -4,12 +4,29 @@
   import { addDays, getDayOfYear } from '$lib/solar';
 
   import Solarpath from '$lib/Solarpath.svelte';
+  import SolarpathCanvas from '$lib/SolarpathCanvas.svelte';
+  import Canvas from './Canvas.svelte';
 
   export let startDate;
   export let numDays;
   export let radiation;
-  export let foregroundColor = '#fe345c';
-  export let backgroundColor = '#1d2830';
+  // export let foregroundColor = '#005f73';
+  // export let foregroundColor = '#0a9396';
+  // export let foregroundColor = '#ee9b00';
+  // export let foregroundColor = '#ae2012';
+  // export let foregroundColor = '#4cc9f0';
+
+  // export let foregroundColor = '#ade8f4';
+  // export let foregroundColor = '#48cae4';
+  // export let foregroundColor = '#0096c7';
+  // export let foregroundColor = '#023e8a';
+
+  export let foregroundColor = '#5e60ce';
+  // export let foregroundColor = '#5390d9';
+  // export let foregroundColor = '#48bfe3';
+  // export let foregroundColor = '#64dfdf';
+
+  export let backgroundColor = '#ffffff';
 
   // Hamburg
   // const lat = 53.45;
@@ -102,7 +119,7 @@
   bind:clientHeight={height}
 >
   {#if (width && height)}
-    <svg
+    <!-- <svg
       width={width}
       height={height}
       style:background={backgroundColor}
@@ -128,9 +145,31 @@
           radiationRange={radiationRange}
           foregroundColor={foregroundColor}
           backgroundColor={backgroundColor}
+          lineWidth="4"
         />
       {/each}
-    </svg>
+    </svg> -->
+    <Canvas
+      width={width}
+      height={height}
+      pixelRatio="4"
+    >
+      {#each dateArray as dayOfYear (dayOfYear)}
+        <SolarpathCanvas
+          dayOfYear={dayOfYear}
+          lat={lat}
+          lon={lon}
+          deltaGMT={deltaGMT}
+          xScale={xScale}
+          yScale={yScale}
+          radiation={radiationExtendedDoubled.find(d => d.dayOfYear === dayOfYear).data}
+          radiationRange={radiationRange}
+          foregroundColor={foregroundColor}
+          backgroundColor={backgroundColor}
+          lineWidth="4"
+        />
+      {/each}
+    </Canvas>
   {/if}
 </div>
 
@@ -139,9 +178,5 @@
     width: 100%;
     height: 100%;
     overflow: hidden;
-  }
-
-  svg {
-    mix-blend-mode: luminosity;
   }
 </style>
