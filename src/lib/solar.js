@@ -69,15 +69,29 @@ export const getAzimuth = (declination, lat, HRA, elevation) => {
   return rad2deg(radAzimuth);
 };
 
-// combined function to calculate sun position
+// combined function to calculate sun's position
 export const getSunPosition = ({ dayOfYear, localTime, deltaGMT, lat, lon }) => {
+  // get local standard time based on meridian
   const LSTM = getLSTM(deltaGMT);
+  // equation of time: corrects for earth's eccentricity and axial tilt
   const EOT = getEOT(dayOfYear);
+  // time correction factor: accounts for the variation of the Local Solar Time (LST)
+  // within a given time zone due to the longitude variations within the time zone
+  // and also incorporates the EoT above
   const TC = getTC(EOT, lon, LSTM);
+  // local solar time
   const LST = getLST(localTime, TC);
+  // hour angle: converts the local solar time (LST) into the number of degrees
+  // which the sun moves across the sky
   const HRA = getHRA(LST);
+
+  // sun y-position relative to equator
   const declination = getDeclination(dayOfYear);
+  // sun y-position relative to horizon
   const elevation = getElevation(declination, lat, HRA);
+
+  // sun x-position
   const azimuth = getAzimuth(declination, lat, HRA, elevation);
+  
   return [elevation, azimuth];
 };
