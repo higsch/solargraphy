@@ -21,12 +21,15 @@
   // export let foregroundColor = '#0096c7';
   // export let foregroundColor = '#023e8a';
 
-  export let foregroundColor = '#5e60ce';
+  // export let foregroundColor = '#5e60ce';
   // export let foregroundColor = '#5390d9';
   // export let foregroundColor = '#48bfe3';
   // export let foregroundColor = '#64dfdf';
 
-  export let backgroundColor = '#ffffff';
+  export let foregroundColor = '#C3C7C0';
+
+  // export let backgroundColor = '#ffffff';
+  export let backgroundColor = '#063959';
 
   // Hamburg
   // const lat = 53.45;
@@ -34,8 +37,13 @@
   // const deltaGMT = 1;
 
   // Solna
-  const lat = 59.38;
-  const lon = 18.03;
+  // const lat = 59.38;
+  // const lon = 18.03;
+  // const deltaGMT = 1;
+
+  // Lilienthal
+  const lat = 53.13333;
+  const lon = 8.91667;
   const deltaGMT = 1;
 
   let width, height;
@@ -166,7 +174,7 @@
           radiationRange={radiationRange}
           foregroundColor={foregroundColor}
           backgroundColor={backgroundColor}
-          lineWidth="4"
+          lineWidth="1"
         />
       {/each}
     </Canvas>
