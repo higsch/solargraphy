@@ -57,8 +57,7 @@
   $: localRadiationRange = [0, max(radiation, d => d.radiation)];
 
   $: colorScale = scalePow()
-    .exponent(1)
-    // .domain(localRadiationRange)
+    .exponent(0.8)
     .domain(radiationRange)
     .range([backgroundColor, foregroundColor]);
     // .interpolate(interpolateHcl);

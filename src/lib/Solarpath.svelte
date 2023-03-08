@@ -18,18 +18,12 @@
   const deltaMinutes = 1;
   const dayMinutes = 24 * 60;
 
-  // $: opacityScale = scaleLinear()
-  //   .domain([radiationRange[0], radiationRange[1] / 5, radiationRange[1]])
-  //   .range([0, 0.1, 1]);
-
   $: localRadiationRange = [0, max(radiation, d => d.radiation)];
 
   $: colorScale = scalePow()
-    .exponent(0.5)
-    // .domain(localRadiationRange)
+    .exponent(0.6)
     .domain(radiationRange)
     .range([backgroundColor, foregroundColor]);
-    // .interpolate(interpolateHcl);
 
   $: emptyPoints = Array.from({length: dayMinutes / deltaMinutes + 1})
     .map((_, i) => ({minute: i * deltaMinutes}));
@@ -65,7 +59,6 @@
     return {
       id: i,
       path,
-      // opacity: opacityScale(r.radiation),
       color: colorScale(r.radiation),
       points: selectedPoints
     };
@@ -73,14 +66,6 @@
 </script>
 
 <g class="solarpath">
-<!-- <g class="solarpath" filter="url(#noise)"> -->
-  <!-- <path
-    d={singlePath}
-    fill="none"
-    stroke={foregroundColor}
-    stroke-width="3"
-    stroke-opacity="1.0"
-  /> -->
   {#each paths as { id, path, color } (id)}
     <path
       d={path}

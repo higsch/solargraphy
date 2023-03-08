@@ -10,35 +10,12 @@
   export let startDate;
   export let numDays;
   export let radiation;
-  // export let foregroundColor = '#005f73';
-  // export let foregroundColor = '#0a9396';
-  // export let foregroundColor = '#ee9b00';
-  // export let foregroundColor = '#ae2012';
-  // export let foregroundColor = '#4cc9f0';
-
-  // export let foregroundColor = '#ade8f4';
-  // export let foregroundColor = '#48cae4';
-  // export let foregroundColor = '#0096c7';
-  // export let foregroundColor = '#023e8a';
-
-  // export let foregroundColor = '#5e60ce';
-  // export let foregroundColor = '#5390d9';
-  // export let foregroundColor = '#48bfe3';
-  // export let foregroundColor = '#64dfdf';
-
   export let foregroundColor = '#C3C7C0';
-
-  // export let backgroundColor = '#ffffff';
   export let backgroundColor = '#063959';
 
   // Hamburg
   // const lat = 53.45;
   // const lon = 9.94;
-  // const deltaGMT = 1;
-
-  // Solna
-  // const lat = 59.38;
-  // const lon = 18.03;
   // const deltaGMT = 1;
 
   // Lilienthal
@@ -127,36 +104,6 @@
   bind:clientHeight={height}
 >
   {#if (width && height)}
-    <!-- <svg
-      width={width}
-      height={height}
-      style:background={backgroundColor}
-    >
-      <defs>
-        <filter id="blur">
-          <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" />
-        </filter>
-        <filter id="noise">
-          <feTurbulence baseFrequency="0.2" xresult="colorNoise" />
-          <feComposite operator="out" in="SourceGraphic" in2="colorNoise"/>
-        </filter>
-      </defs>
-      {#each dateArray as dayOfYear (dayOfYear)}
-        <Solarpath
-          dayOfYear={dayOfYear}
-          lat={lat}
-          lon={lon}
-          deltaGMT={deltaGMT}
-          xScale={xScale}
-          yScale={yScale}
-          radiation={radiationExtendedDoubled.find(d => d.dayOfYear === dayOfYear).data}
-          radiationRange={radiationRange}
-          foregroundColor={foregroundColor}
-          backgroundColor={backgroundColor}
-          lineWidth="4"
-        />
-      {/each}
-    </svg> -->
     <Canvas
       width={width}
       height={height}
@@ -174,7 +121,7 @@
           radiationRange={radiationRange}
           foregroundColor={foregroundColor}
           backgroundColor={backgroundColor}
-          lineWidth="1"
+          lineWidth="2"
         />
       {/each}
     </Canvas>
