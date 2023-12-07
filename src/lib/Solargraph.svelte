@@ -46,11 +46,6 @@
   // const lon = 9.94;
   // const deltaGMT = 1;
 
-  // Solna
-  // const lat = 59.38;
-  // const lon = 18.03;
-  // const deltaGMT = 1;
-
   // Lilienthal
   const lat = 53.13333;
   const lon = 8.91667;
@@ -142,36 +137,6 @@
   bind:clientHeight={height}
 >
   {#if (width && height)}
-    <!-- <svg
-      width={width}
-      height={height}
-      style:background={backgroundColor}
-    >
-      <defs>
-        <filter id="blur">
-          <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" />
-        </filter>
-        <filter id="noise">
-          <feTurbulence baseFrequency="0.2" xresult="colorNoise" />
-          <feComposite operator="out" in="SourceGraphic" in2="colorNoise"/>
-        </filter>
-      </defs>
-      {#each dateArray as dayOfYear (dayOfYear)}
-        <Solarpath
-          dayOfYear={dayOfYear}
-          lat={lat}
-          lon={lon}
-          deltaGMT={deltaGMT}
-          xScale={xScale}
-          yScale={yScale}
-          radiation={radiationExtendedDoubled.find(d => d.dayOfYear === dayOfYear).data}
-          radiationRange={radiationRange}
-          foregroundColor={foregroundColor}
-          backgroundColor={backgroundColor}
-          lineWidth="4"
-        />
-      {/each}
-    </svg> -->
     <Canvas
       width={width}
       height={height}
