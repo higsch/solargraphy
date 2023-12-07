@@ -23,9 +23,10 @@
   const dayMinutes = 24 * 60;
 
   function draw(ctx) {
-    paths.forEach(({color, points}) => {
+    paths.forEach(({color, opacity = 1.0, points}) => {
       ctx.strokeStyle = color;
       ctx.lineWidth = lineWidth;
+			ctx.globalAlpha = opacity;
       // const p = new Path2D(path);
       // ctx.stroke(p);
 
@@ -57,11 +58,18 @@
   $: localRadiationRange = [0, max(radiation, d => d.radiation)];
 
   $: colorScale = scalePow()
-    .exponent(1)
+    .exponent(0.7)
     // .domain(localRadiationRange)
     .domain(radiationRange)
-    .range([backgroundColor, foregroundColor]);
-    // .interpolate(interpolateHcl);
+    .range([backgroundColor, foregroundColor])
+    .interpolate(interpolateHcl);
+
+	$: opacityScale = scalePow()
+    .exponent(1)
+    .domain(localRadiationRange)
+    // .domain(radiationRange)
+    .range([0.2, 1]);;
+
 
   $: emptyPoints = Array.from({length: dayMinutes / deltaMinutes + 1})
     .map((_, i) => ({minute: i * deltaMinutes}));
@@ -97,7 +105,7 @@
     return {
       id: i,
       path,
-      // opacity: opacityScale(r.radiation),
+      opacity: opacityScale(r.radiation),
       color: colorScale(r.radiation),
       points: selectedPoints
     };

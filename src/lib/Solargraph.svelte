@@ -1,5 +1,5 @@
 <script>
-  import { groups, scaleLinear, max } from 'd3';
+  import { groups, scaleLinear, max, min, mean } from 'd3';
 
   import { addDays, getDayOfYear } from '$lib/solar';
 
@@ -12,9 +12,10 @@
   export let radiation;
   // export let foregroundColor = '#005f73';
   // export let foregroundColor = '#0a9396';
-  // export let foregroundColor = '#ee9b00';
+  // export let foregroundColor = '#ee9b00'; //+1
   // export let foregroundColor = '#ae2012';
   // export let foregroundColor = '#4cc9f0';
+	// export let backgroundColor = '#4cc9f0';
 
   // export let foregroundColor = '#ade8f4';
   // export let foregroundColor = '#48cae4';
@@ -26,10 +27,19 @@
   // export let foregroundColor = '#48bfe3';
   // export let foregroundColor = '#64dfdf';
 
-  export let foregroundColor = '#C3C7C0';
+  // export let foregroundColor = '#90e0ef'; //München
+  // export let foregroundColor = '#00b4d8'; // Schweden
+  // export let foregroundColor = '#0077b6'; // Mannheim
+  // export let foregroundColor = '#03045e'; //Hamburg
 
-  // export let backgroundColor = '#ffffff';
-  export let backgroundColor = '#063959';
+  // export let foregroundColor = '#7209b7'; // Olaf
+	export let foregroundColor = '#3a0ca3'; // Papa
+  // export let foregroundColor = '#03045e';
+
+  // export let foregroundColor = '#C3C7C0';
+
+  export let backgroundColor = '#8eecf5';
+  // export let backgroundColor = '#063959';
 
   // Hamburg
   // const lat = 53.45;
@@ -49,11 +59,11 @@
   let width, height;
 
   $: xScale = scaleLinear()
-    .domain([0, 360])
+    .domain([30, 330])
     .range([0, width]);
 
   $: yScale = scaleLinear()
-    .domain([0, 90])
+    .domain([0, 65])
     .range([height, 0]);
 
   $: dateArray = Array.from({length: numDays})
@@ -63,6 +73,11 @@
     .map(d => {
       return getDayOfYear(d);
     });
+
+	$: lineWidthScale = scaleLinear()
+		.domain([min(dateArray), mean(dateArray), max(dateArray)])
+		.range([0.3, 3, 0.3])
+		.clamp(true);
 
   $: radiationExtended = groups(radiation, d => d.dayOfYear).map(d => {
     return {
@@ -174,7 +189,7 @@
           radiationRange={radiationRange}
           foregroundColor={foregroundColor}
           backgroundColor={backgroundColor}
-          lineWidth="1"
+					lineWidth={lineWidthScale(dayOfYear)}
         />
       {/each}
     </Canvas>
